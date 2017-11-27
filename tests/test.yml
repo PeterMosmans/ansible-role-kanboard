@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - PeterMosmans.apache2
+    - PeterMosmans.kanboard
+  vars:
+    - apache2_php: true
