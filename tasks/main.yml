@@ -1,0 +1,133 @@
+---
+# tasks file for PeterMosmans.kanboard
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: false
+  with_items:
+    - ca-certificates
+    - openssl
+    - php-gd
+    - php-mbstring
+    - php-sqlite3
+    - rsync
+    - tar
+    - unzip
+    - zip
+
+- name: Make sure kanboard directory exists (workaround for Ansible bug)
+  file:
+    path: "{{ kanboard_tmp }}"
+    state: directory
+  tags:
+    - upgrade
+
+- name: Download latest version of Kanboard
+  get_url:
+    url: "{{ kanboard_source }}"
+    dest: "{{ kanboard_tmp }}/kanboard-latest.zip"
+    group: "{{ kanboard_group }}"
+    owner: "{{ kanboard_user }}"
+    # mode: "{{ item.mode }}"
+  tags:
+    - upgrade
+
+- name: Unpack Kanboard
+  unarchive:
+    src: "{{ kanboard_tmp }}/kanboard-latest.zip"
+    dest: "{{ kanboard_tmp }}"
+    remote_src: true
+    # extra_opts: ['--strip-components=1']
+    group: "{{ kanboard_group }}"
+    owner: "{{ kanboard_user }}"
+    mode: "0750"
+  tags:
+    - upgrade
+
+- name: Deploy site to correct path
+  shell: rsync -a {{ kanboard_tmp }}/kanboard/* {{ kanboard_base }}
+  args:
+    executable: /bin/bash
+  tags:
+    - upgrade
+
+- name: Deploy site to correct path
+  shell: rsync -a {{ kanboard_tmp }}/kanboard/.htaccess {{ kanboard_base }}
+  args:
+    executable: /bin/bash
+  tags:
+    - upgrade
+
+- name: Apply correct permissions for Kanboard user
+  file:
+    path: "{{kanboard_base }}/{{ item }}"
+    state: directory
+    mode: "0770"
+    group: "{{ kanboard_group }}"
+    owner: "{{ kanboard_user }}"
+    recurse: yes
+  with_items:
+    - data
+    - "{{ kanboard_upload }}/thumbnails"
+    - "{{ kanboard_upload }}"
+  tags:
+    - permission
+    - upgrade
+
+  # - name: Apply and deploy configuration templates
+  #   template:
+  #     src: "{{ item.src }}"
+  #     dest: "{{ kanboard_base }}/{{ item.dest }}"
+  #     mode: "0770"
+  #     group: "{{ kanboard_group }}"
+  #     owner: "{{ kanboard_user }}"
+  #   with_items:
+  #     - src: config.php.j2
+  #       dest: config.php
+  #   tags:
+  #     - configure
+
+- name: Install maintenance cron job
+  template:
+    src: maintenance.sh.j2
+    dest: /etc/cron.daily/maintenance-dokuwiki
+    mode: "0755"
+    group: root
+    owner: root
+
+- name: Install plugins
+  file:
+    path: "{{ kanboard_base }}/plugins/{{ item.name }}"
+    state: absent
+  with_flattened:
+    - "{{ kanboard_plugins|default([]) }}"
+    - "{{ kanboard_plugins_remove|default([]) }}"
+  tags:
+    - plugins
+    - upgrade
+
+- name: Recreate directory for each plugin (workaround for Ansible bug)
+  file:
+    path: "{{ kanboard_base }}/plugins/{{ item.name }}"
+    state: directory
+    group: "{{ kanboard_group }}"
+    owner: "{{ kanboard_user }}"
+  with_items: "{{ kanboard_plugins|default([]) }}"
+  tags:
+    - plugins
+    - upgrade
+
+- name: Download and install latest version of plugins
+  unarchive:
+    src: "{{ item.src }}"
+    dest: "{{ kanboard_base }}/plugins/"
+    remote_src: true
+    group: "{{ kanboard_group }}"
+    owner: "{{ kanboard_user }}"
+    mode: "0770"
+  with_items: "{{ kanboard_plugins|default([]) }}"
+  tags:
+    - plugins
+    - upgrade
+
