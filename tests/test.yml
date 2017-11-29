@@ -2,7 +2,7 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - PeterMosmans.apache2
-    - PeterMosmans.kanboard
+    # - PeterMosmans.apache2
+    - ansible-role-kanboard
   vars:
     - apache2_php: true
