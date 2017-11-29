@@ -75,6 +75,19 @@
     - permission
     - upgrade
 
+- name: Secure configuration
+  file:
+    path: "{{ kanboard_base }}/{{ item }}"
+    state: absent
+  with_items:
+    - ChangeLog
+    - LICENSE
+    - web.config
+    - data/web.config
+  tags:
+    - harden
+    - upgrade
+
   # - name: Apply and deploy configuration templates
   #   template:
   #     src: "{{ item.src }}"
