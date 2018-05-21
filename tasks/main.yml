@@ -49,14 +49,14 @@
     - upgrade
 
 - name: Deploy site to correct path
-  shell: rsync -a {{ kanboard_tmp }}/kanboard/* {{ kanboard_base }}
+  shell: rsync -a {{ kanboard_tmp }}/kanboard-?.?.?/* {{ kanboard_base }}
   args:
     executable: /bin/bash
   tags:
     - upgrade
 
 - name: Deploy site to correct path
-  shell: rsync -a {{ kanboard_tmp }}/kanboard/.htaccess {{ kanboard_base }}
+  shell: rsync -a {{ kanboard_tmp }}/kanboard-?.?.?/.htaccess {{ kanboard_base }}
   args:
     executable: /bin/bash
   tags:
