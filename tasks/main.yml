@@ -1,5 +1,7 @@
 ---
 # tasks file for PeterMosmans.kanboard
+- include: dependencies-{{ ansible_os_family }}.yml
+
 - name: Install required packages
   apt:
     name: "{{ item }}"

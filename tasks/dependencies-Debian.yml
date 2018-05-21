@@ -1,0 +1,16 @@
+- name: Install required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+    install_recommends: false
+  with_items:
+    - ca-certificates
+    - openssl
+    - php-gd
+    - php-mbstring
+    - php-sqlite3
+    - php-xml
+    - rsync
+    - tar
+    - unzip
+    - zip
