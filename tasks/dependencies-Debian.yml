@@ -6,10 +6,10 @@
   with_items:
     - ca-certificates
     - openssl
-    - php-mbstring
-    - php-sqlite3
-    - php-xml
     - php7.0-gd
+    - php7.0-mbstring
+    - php7.0-sqlite3
+    - php7.0-xml
     - rsync
     - tar
     - unzip
