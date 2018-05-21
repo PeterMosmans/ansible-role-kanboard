@@ -16,10 +16,13 @@
     - unzip
     - zip
 
-- name: Make sure kanboard directory exists (workaround for Ansible bug)
+- name: Make sure kanboard directories exist (workaround for Ansible bug)
   file:
-    path: "{{ kanboard_tmp }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - "{{ kanboard_base }}"
+    - "{{ kanboard_tmp }}"
   tags:
     - upgrade
 
