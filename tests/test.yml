@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
   remote_user: root
+  become: true
   roles:
     # - PeterMosmans.apache2
     - ansible-role-kanboard
