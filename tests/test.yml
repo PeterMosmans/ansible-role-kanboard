@@ -7,3 +7,4 @@
     - ansible-role-kanboard
   vars:
     - apache2_php: true
+    - kanboard_source: https://github.com/kanboard/kanboard/archive/v1.2.11.zip
