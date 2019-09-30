@@ -25,6 +25,9 @@ kanboard_upload: /var/www/html/data
 kanboard_plugin_dir: data/plugins
 kanboard_group: www-data
 kanboard_user: root
+kanboard_files_mode: 0770
+php_package_version: php # php7.0, php7.3 ...
+kanboard_configuration_file: false
 ```
 
 
