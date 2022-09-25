@@ -16,14 +16,17 @@
     state: present
     install_recommends: false
 
-- name: Make sure kanboard directories exist (workaround for Ansible bug)
+- name: Make sure kanboard directories exist (workaround for Travis Ansible bug)
   file:
-    path: "{{ kanboard_tmp }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - "{{ kanboard_base }}"
+    - "{{ kanboard_tmp }}"
   tags:
     - upgrade
 
-- name: Unpack Kanboard
+- name: Download and unpack Kanboard
   unarchive:
     src: "{{ kanboard_source }}"
     dest: "{{ kanboard_base }}"
@@ -55,18 +58,18 @@
     - permission
     - upgrade
 
-#- name: Secure configuration
-#  file:
-#    path: "{{ kanboad_complete_path }}{{ item }}"
-#    state: absent
-#  with_items:
-#    - ChangeLog
-#    - LICENSE
-#    - web.config
-#    - data/web.config
-#  tags:
-#    - harden
-#    - upgrade
+- name: Secure configuration
+  file:
+    path: "{{ kanboad_complete_path }}{{ item }}"
+    state: absent
+  with_items:
+    - ChangeLog
+    - LICENSE
+    - web.config
+    - data/web.config
+  tags:
+    - harden
+    - upgrade
 
 - name: Apply and deploy configuration templates
   template:
@@ -124,4 +127,3 @@
   tags:
     - plugins
     - upgrade
-

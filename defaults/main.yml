@@ -1,6 +1,7 @@
 ---
 # defaults file for PeterMosmans.kanboard
-kanboard_source: https://kanboard.net/kanboard-latest.zip
+# check the latest release here https://github.com/kanboard/kanboard/releases/latest
+kanboard_source: https://github.com/kanboard/kanboard/archive/vx.x.xx.zip
 kanboard_base: /var/www/ # last / is important to build paths
 kanboard_directory_name: html
 kanboad_complete_path: "{{ kanboard_base }}{{ kanboard_directory_name }}/"
